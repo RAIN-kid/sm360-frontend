@@ -46,13 +46,13 @@ export default function LoginPage() {
 
         // Tunaweka conditions ambazo ni bulletproof (zinashika kila variations)
         if (roleStr.includes("SUPER_ADMIN") || roleId === 1) {
-          router.push("/super-admin/dashboard");
+          router.push("/super-admin");
         } 
         else if (roleStr.includes("LGA") || roleStr.includes("MUNICIPAL")) {
-          router.push("/lga/dashboard");
+          router.push("/lga");
         } 
         else if (roleStr.includes("COMPANY_ADMIN") || roleStr.includes("PRIVATE")) {
-          router.push("/company/dashboard");
+          router.push("/company");
         } 
         else if (roleStr.includes("AGENT") || roleStr.includes("FIELD")) {
           router.push("/agent"); // <--- Agent ataelekea hapa kwa usahihi!
