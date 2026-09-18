@@ -41,11 +41,12 @@ export default function LgaDashboardPage() {
       setAdminContext(lgaAdmin);
 
       // 2. Vuta Data za Halmashauri Hiyo Tu (Kwa kutumia LGA ID yake)
+      // TUNAENDELEA KUVUTA KWA KUTUMIA API ZAKO ZILEZILE AMBAZO ZINA WHERE lga_id = $1
       const [resProps, resAgents, resWards, resStreets] = await Promise.all([
-        axios.get(`${url}/api/super-admin/properties?lga_id=${lgaAdmin.lga_id}`, config),
-        axios.get(`${url}/api/super-admin/agents?lga_id=${lgaAdmin.lga_id}`, config),
-        axios.get(`${url}/api/super-admin/wards?organization_id=${lgaAdmin.lga_id}`, config),
-        axios.get(`${url}/api/super-admin/streets?lga_id=${lgaAdmin.lga_id}`, config)
+        axios.get(`${url}/api/super-admin/properties?lga_id=${lgaAdmin.lga_id}`, config).catch(() => ({ data: { data: [] } })),
+        axios.get(`${url}/api/super-admin/agents?lga_id=${lgaAdmin.lga_id}`, config).catch(() => ({ data: { data: [] } })),
+        axios.get(`${url}/api/super-admin/wards?organization_id=${lgaAdmin.lga_id}`, config).catch(() => ({ data: { data: [] } })),
+        axios.get(`${url}/api/super-admin/streets?lga_id=${lgaAdmin.lga_id}`, config).catch(() => ({ data: { data: [] } }))
       ]);
 
       setProperties(resProps.data.data || []);
