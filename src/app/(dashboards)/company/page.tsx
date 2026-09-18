@@ -37,38 +37,20 @@ export default function CompanyDashboard() {
       const profileRes = await axios.get(`${url}/api/super-admin/my-profile`, config);
       const companyId = profileRes.data.data.organization_id;
 
-      // Hapa katika mfumo halisi utakuwa na endpoint moja ya Dashboard ya Company
-      // Kwa sasa tunatumia endpoints ulizonazo kuvuta data
-      const [trucksRes, driversRes, routesRes] = await Promise.all([
-        axios.get(`${url}/api/super-admin/trucks?organization_id=${companyId}`, config),
-        axios.get(`${url}/api/super-admin/drivers?organization_id=${companyId}`, config),
-        axios.get(`${url}/api/super-admin/routes?company_id=${companyId}`, config) // Ikiwepo
-      ].map(p => p.catch(e => ({ data: { data: [] } })))); // Catch individual errors to prevent total crash
+      // 2. Vuta Data LIVE kutoka kwenye API mpya tuliyotengeneza Backend
+      const response = await axios.get(`${url}/api/super-admin/dashboard-metrics?company_id=${companyId}`, config);
+      const dashboardData = response.data.data;
 
-      const trucks = trucksRes.data?.data || [];
-      const drivers = driversRes.data?.data || [];
-      const routes = routesRes.data?.data || [];
-
-      // Hesabu Metrics
+      // 3. Weka Data Halisi (Sio Mocks Tena)
       setMetrics({
-        totalTrucks: trucks.length,
-        activeDrivers: drivers.length,
-        contractedLgas: 2, // Hii utaibadili iwe dynamic kutokana na routes
-        totalEarnings: 45200000 // Hii ni mock, utai-link na malipo ya LGA badae
+        totalTrucks: dashboardData.metrics?.totalTrucks || 0,
+        activeDrivers: dashboardData.metrics?.activeDrivers || 0,
+        contractedLgas: dashboardData.metrics?.contractedLgas || 0,
+        totalEarnings: dashboardData.metrics?.totalEarnings || 0
       });
 
-      // Hapa tunasave Contracts/LGAs kutokana na ruti tulizopewa (Mocked temporarily mpaka API ikae sawa)
-      setContracts([
-        { lga_name: "Kinondoni Municipal", zones: 4, status: "Active" },
-        { lga_name: "Ilala Municipal", zones: 2, status: "Active" }
-      ]);
-
-      // Hapa tunasave Recent completed routes (Mocked for UI flow)
-      setRecentRoutes([
-        { name: "Makumbusho Block A", truck: "T 123 ABC", driver: "Ali Juma", time: "2 hours ago" },
-        { name: "Kijitonyama Mwenge", truck: "T 456 DEF", driver: "Musa Rajab", time: "Yesterday" },
-        { name: "Upanga East", truck: "T 789 GHI", driver: "John Doe", time: "Sep 08" }
-      ]);
+      setContracts(dashboardData.contracts || []);
+      setRecentRoutes(dashboardData.recentRoutes || []);
 
     } catch (error) {
       console.error("Failed to load company dashboard data", error);
